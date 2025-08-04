@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闲鱼智能监控机器人</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+</head>
+<body>
+    <header>
+        <h1>闲鱼智能监控</h1>
+        <div class="header-controls">
+            <div class="system-status">状态: <span id="status-indicator" class="status-stopped"></span><span id="status-text">已停止</span></div>
+            <button id="start-all-tasks" class="control-button">🚀 全部启动</button>
+            <button id="stop-all-tasks" class="control-button" style="display: none;">🛑 全部停止</button>
+        </div>
+    </header>
+    <div class="container">
+        <aside>
+            <nav>
+                <ul>
+                    <li><a href="#tasks" class="nav-link active">任务管理</a></li>
+                    <li><a href="#results" class="nav-link">结果查看</a></li>
+                    <li><a href="#logs" class="nav-link">运行日志</a></li>
+                    <li><a href="#cookies" class="nav-link">Cookie管理</a></li>
+                    <li><a href="#settings" class="nav-link">系统设置</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main id="main-content">
+            <!-- 内容将根据侧边栏选择动态加载 -->
+        </main>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div id="add-task-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>创建新监控任务 (AI驱动)</h2>
+                <button id="close-modal-btn" class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-task-form">
+                    <div class="form-group">
+                        <label for="task-name">任务名称</label>
+                        <input type="text" id="task-name" name="task_name" placeholder="例如：索尼 A7M4 相机" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="keyword">搜索关键词</label>
+                        <input type="text" id="keyword" name="keyword" placeholder="例如：a7m4" required>
+                    </div>
+                    <div class="form-group form-group-inline">
+                        <div>
+                            <label for="min-price">价格范围 (可选)</label>
+                            <input type="number" id="min-price" name="min_price" placeholder="最低价">
+                        </div>
+                        <span>-</span>
+                        <div>
+                            <label for="max-price">&nbsp;</label>
+                            <input type="number" id="max-price" name="max_price" placeholder="最高价">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-description">详细购买需求</label>
+                        <textarea id="task-description" name="description" rows="6" placeholder="请用自然语言详细描述你的购买需求，AI将根据此描述生成分析标准。例如：我想买一台95新以上的索尼A7M4相机，预算在10000到13000元之间，快门数要低于5000。必须是国行且配件齐全。优先考虑个人卖家..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="personal-only" name="personal_only" checked>
+                            仅筛选个人闲置卖家
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-add-task-btn" class="control-button">取消</button>
+                <button id="save-new-task-btn" class="control-button primary-btn">
+                    <span class="btn-text">创建任务</span>
+                    <span class="spinner" style="display: none;"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JSON Viewer Modal -->
+    <div id="json-viewer-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>AI 分析详情</h2>
+                <button id="close-json-viewer-btn" class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <pre id="json-viewer-content"></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Prompt Modal -->
+    <div id="prompt-modal" class="modal" style="display: none;">
+        <div class="modal-content prompt-modal-content">
+            <div class="modal-header">
+                <h3 id="prompt-modal-title">AI标准</h3>
+                <button id="close-prompt-modal-btn" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="prompt-modal-content" placeholder="AI分析标准内容..." spellcheck="false"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button id="generate-prompt-btn" class="control-button secondary-btn">一键生成</button>
+                <button id="save-prompt-modal-btn" class="control-button primary-btn">保存更改</button>
+                <button id="cancel-prompt-modal-btn" class="control-button">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load modules in correct order -->
+    <script type="module" src="/static/js/tasks.js"></script>
+    <script type="module" src="/static/js/results.js"></script>
+    <script type="module" src="/static/js/logs.js"></script>
+    <script type="module" src="/static/js/cookies.js"></script>
+    <script type="module" src="/static/js/settings.js"></script>
+    <script type="module" src="/static/js/main.js"></script>
+</body>
+</html>
