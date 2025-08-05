@@ -78,29 +78,52 @@ export class SettingsModule {
                 </div>
                 
                 <div class="settings-container">
-                    <div class="settings-card">
+                    <div class="settings-card full-width">
                         <h3>系统状态</h3>
                         <div id="system-status-content">
                             <p>正在加载系统状态...</p>
                         </div>
                     </div>
-                    
-                    <div class="settings-card">
+
+                    <div class="settings-card full-width">
                         <h3>环境配置</h3>
                         <div id="env-config-content">
                             <p>正在加载环境配置...</p>
                         </div>
                     </div>
-                    
-                    <div class="settings-card">
-                        <h3>SMTP邮件测试</h3>
-                        <div class="smtp-test-section">
-                            <div class="smtp-test-info">
-                                <p>测试SMTP邮件配置是否正常工作</p>
+
+                    <!-- 测试功能区域 - 两列布局 -->
+                    <div class="settings-row">
+                        <div class="settings-card half-width">
+                            <h3>🧪 代理测试</h3>
+                            <div class="test-section">
+                                <div class="test-info">
+                                    <p>测试当前代理配置是否正常工作</p>
+                                </div>
+                                <div class="test-controls">
+                                    <button id="test-proxy-btn" class="test-btn">🔧 测试代理连接</button>
+                                    <div id="proxy-test-result" class="test-result" style="display: none;"></div>
+                                </div>
                             </div>
-                            <div class="smtp-test-controls">
-                                <button id="test-smtp-email-btn" class="email-test-btn">📧 发送测试邮件</button>
+                        </div>
+
+                        <div class="settings-card half-width">
+                            <h3>📧 SMTP邮件测试</h3>
+                            <div class="test-section">
+                                <div class="test-info">
+                                    <p>测试SMTP邮件配置是否正常工作</p>
+                                </div>
+                                <div class="test-controls">
+                                    <button id="test-smtp-email-btn" class="test-btn">📧 发送测试邮件</button>
+                                </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-card full-width">
+                        <h3>🤖 AI提示词管理</h3>
+                        <div id="prompt-manager-content">
+                            <p>正在加载提示词管理器...</p>
                         </div>
                     </div>
                 </div>
@@ -197,30 +220,35 @@ export class SettingsModule {
                     `).join('')}
                 </tbody>
             </table>
-            <div class="env-config-actions">
-                <p><small>💡 提示：修改配置后需要重启应用程序才能生效</small></p>
-            </div>
         `;
     }
 
     renderPromptManager() {
         return `
             <div class="prompt-manager">
-                <div class="prompt-file-list">
-                    <h4>Prompt文件列表</h4>
-                    <div id="prompt-files-container">
-                        <p>正在加载文件列表...</p>
+                <div class="prompt-files-panel">
+                    <div class="prompt-files-header">
+                        <h4>📁 文件列表</h4>
+                        <button id="create-prompt-file-btn" class="create-file-btn">➕ 新建</button>
                     </div>
-                    <button id="create-prompt-file-btn" class="create-btn">➕ 创建新文件</button>
-                </div>
-                <div class="prompt-editor">
-                    <div class="editor-header">
-                        <h4 id="prompt-editor-title">请选择一个文件</h4>
-                        <div class="editor-actions">
-                            <button id="prompt-save-btn" class="save-btn" disabled>💾 保存</button>
+                    <div class="prompt-files-list" id="prompt-files-container">
+                        <div class="loading-files">
+                            <p>🔄 正在加载文件列表...</p>
                         </div>
                     </div>
-                    <textarea id="prompt-editor-textarea" rows="15" placeholder="请选择左侧的文件进行编辑..." readonly></textarea>
+                </div>
+                <div class="prompt-editor-panel">
+                    <div class="prompt-editor-header">
+                        <h4 id="prompt-editor-title" class="prompt-editor-title">💡 请选择一个文件开始编辑</h4>
+                        <button id="prompt-save-btn" class="prompt-save-btn" disabled>💾 保存</button>
+                    </div>
+                    <textarea id="prompt-editor-textarea" class="prompt-editor-textarea" readonly placeholder="👈 点击左侧的文件名开始编辑内容...
+
+💡 提示：
+• 点击文件名可以加载文件内容
+• 点击'编辑'按钮也可以编辑文件
+• 修改内容后记得点击'💾 保存'按钮
+• 支持创建新的.txt文件"></textarea>
                 </div>
             </div>
         `;
@@ -366,8 +394,79 @@ export class SettingsModule {
     async loadPromptManager() {
         const container = document.getElementById('prompt-manager-content');
         if (!container) return;
-        
+
         container.innerHTML = this.renderPromptManager();
+
+        // 加载文件列表
+        await this.loadPromptFiles();
+
+        // 绑定Prompt管理器的事件
+        this.bindPromptManagerEvents();
+    }
+
+    async loadPromptFiles() {
+        const filesContainer = document.getElementById('prompt-files-container');
+        if (!filesContainer) return;
+
+        try {
+            const response = await fetch('/api/prompts');
+            if (!response.ok) throw new Error('获取文件列表失败');
+
+            const files = await response.json();
+
+            if (files.length === 0) {
+                filesContainer.innerHTML = '<p class="no-files">暂无Prompt文件</p>';
+                return;
+            }
+
+            filesContainer.innerHTML = files.map(filename => `
+                <div class="prompt-file-item" data-filename="${filename}">
+                    <span class="file-name" data-filename="${filename}">${filename}</span>
+                    <div class="file-actions">
+                        <button class="edit-file-btn" data-filename="${filename}">编辑</button>
+                        <button class="delete-file-btn" data-filename="${filename}">删除</button>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (error) {
+            console.error('加载Prompt文件列表失败:', error);
+            filesContainer.innerHTML = '<p class="error">加载文件列表失败</p>';
+        }
+    }
+
+    bindPromptManagerEvents() {
+        // 绑定创建文件按钮
+        const createBtn = document.getElementById('create-prompt-file-btn');
+        if (createBtn) {
+            createBtn.addEventListener('click', () => this.createPromptFile());
+        }
+
+        // 绑定保存按钮
+        const saveBtn = document.getElementById('prompt-save-btn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => this.savePromptFile());
+        }
+
+        // 绑定文件操作按钮（使用事件委托）
+        const filesContainer = document.getElementById('prompt-files-container');
+        if (filesContainer) {
+            filesContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('edit-file-btn')) {
+                    const filename = e.target.dataset.filename;
+                    this.editPromptFile(filename);
+                } else if (e.target.classList.contains('delete-file-btn')) {
+                    const filename = e.target.dataset.filename;
+                    this.deletePromptFile(filename);
+                } else if (e.target.classList.contains('file-name') || e.target.classList.contains('prompt-file-item')) {
+                    // 点击文件名或文件项时加载文件内容
+                    const filename = e.target.dataset.filename || e.target.closest('.prompt-file-item')?.dataset.filename;
+                    if (filename) {
+                        this.editPromptFile(filename);
+                    }
+                }
+            });
+        }
     }
 
     bindEvents() {
@@ -383,6 +482,282 @@ export class SettingsModule {
         const testEmailBtn = document.getElementById('test-smtp-email-btn');
         if (testEmailBtn) {
             testEmailBtn.addEventListener('click', () => this.sendTestEmail());
+        }
+
+        // Bind test proxy button
+        const testProxyBtn = document.getElementById('test-proxy-btn');
+        if (testProxyBtn) {
+            testProxyBtn.addEventListener('click', () => this.testProxy());
+        }
+    }
+
+    async testProxy() {
+        const testBtn = document.getElementById('test-proxy-btn');
+        const resultDiv = document.getElementById('proxy-test-result');
+
+        if (!testBtn || !resultDiv) return;
+
+        // 禁用按钮并显示加载状态
+        testBtn.disabled = true;
+        testBtn.textContent = '🔄 测试中...';
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `
+            <div class="test-progress">
+                <div class="progress-step active">📡 读取代理配置</div>
+                <div class="progress-step">🔍 获取代理IP</div>
+                <div class="progress-step">🌐 测试连接</div>
+                <div class="progress-step">✅ 完成测试</div>
+            </div>
+        `;
+
+        try {
+            // 更新进度
+            this.updateTestProgress(1, '🔍 获取代理IP中...');
+
+            const response = await fetch('/api/test-proxy', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const result = await response.json();
+
+            // 更新进度
+            this.updateTestProgress(2, '🌐 测试代理连接...');
+
+            // 等待一下让用户看到进度
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // 显示测试结果
+            this.updateTestProgress(3, '✅ 测试完成');
+            this.displayProxyTestResult(result);
+
+        } catch (error) {
+            console.error('代理测试失败:', error);
+            resultDiv.innerHTML = `
+                <div class="test-result error">
+                    <h4>❌ 测试失败</h4>
+                    <p>网络错误: ${error.message}</p>
+                </div>
+            `;
+        } finally {
+            // 恢复按钮状态
+            testBtn.disabled = false;
+            testBtn.textContent = '🧪 测试代理连接';
+        }
+    }
+
+    updateTestProgress(step, message) {
+        const steps = document.querySelectorAll('.progress-step');
+        steps.forEach((stepEl, index) => {
+            if (index < step) {
+                stepEl.classList.add('completed');
+                stepEl.classList.remove('active');
+            } else if (index === step) {
+                stepEl.classList.add('active');
+                stepEl.classList.remove('completed');
+            } else {
+                stepEl.classList.remove('active', 'completed');
+            }
+        });
+
+        if (message) {
+            const progressDiv = document.querySelector('.test-progress');
+            if (progressDiv) {
+                progressDiv.innerHTML += `<div class="progress-message">${message}</div>`;
+            }
+        }
+    }
+
+    displayProxyTestResult(result) {
+        const resultDiv = document.getElementById('proxy-test-result');
+        const details = result.details || {};
+
+        let resultHtml = '';
+
+        if (result.success) {
+            resultHtml = `
+                <div class="test-result success">
+                    <h4>✅ 代理测试成功</h4>
+                    <p>${result.message}</p>
+                    <div class="test-details">
+                        <div class="detail-item">
+                            <span class="label">代理IP:</span>
+                            <span class="value">${details.proxy_ip || 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">响应时间:</span>
+                            <span class="value">${details.response_time || 'N/A'}ms</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">测试URL:</span>
+                            <span class="value">${details.test_url || 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            resultHtml = `
+                <div class="test-result error">
+                    <h4>❌ 代理测试失败</h4>
+                    <p>${result.message}</p>
+                    <div class="test-details">
+                        <div class="detail-item">
+                            <span class="label">代理启用:</span>
+                            <span class="value">${details.proxy_enabled ? '是' : '否'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">API地址:</span>
+                            <span class="value">${details.proxy_api_url || '未配置'}</span>
+                        </div>
+                        ${details.proxy_ip ? `
+                        <div class="detail-item">
+                            <span class="label">获取的IP:</span>
+                            <span class="value">${details.proxy_ip}</span>
+                        </div>
+                        ` : ''}
+                        ${details.error ? `
+                        <div class="detail-item">
+                            <span class="label">错误信息:</span>
+                            <span class="value error-text">${details.error}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        resultDiv.innerHTML = resultHtml;
+    }
+
+    async createPromptFile() {
+        const filename = prompt('请输入文件名（必须以.txt结尾）:');
+        if (!filename) return;
+
+        if (!filename.endsWith('.txt')) {
+            alert('文件名必须以.txt结尾');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/prompts/${filename}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: '' })
+            });
+
+            if (response.ok) {
+                this.showNotification('文件创建成功', 'success');
+                await this.loadPromptFiles();
+                await this.editPromptFile(filename);
+            } else {
+                const error = await response.json();
+                alert(`创建文件失败: ${error.detail}`);
+            }
+        } catch (error) {
+            console.error('创建文件失败:', error);
+            alert('创建文件失败');
+        }
+    }
+
+    async editPromptFile(filename) {
+        try {
+            const response = await fetch(`/api/prompts/${filename}`);
+            if (!response.ok) throw new Error('获取文件内容失败');
+
+            const data = await response.json();
+
+            // 更新编辑器
+            const titleEl = document.getElementById('prompt-editor-title');
+            const textareaEl = document.getElementById('prompt-editor-textarea');
+            const saveBtn = document.getElementById('prompt-save-btn');
+
+            if (titleEl) titleEl.textContent = `编辑: ${filename}`;
+            if (textareaEl) {
+                textareaEl.value = data.content;
+                textareaEl.readOnly = false;
+                textareaEl.dataset.filename = filename;
+            }
+            if (saveBtn) saveBtn.disabled = false;
+
+            // 高亮当前选中的文件
+            document.querySelectorAll('.prompt-file-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.filename === filename);
+            });
+
+        } catch (error) {
+            console.error('加载文件内容失败:', error);
+            alert('加载文件内容失败');
+        }
+    }
+
+    async savePromptFile() {
+        const textareaEl = document.getElementById('prompt-editor-textarea');
+        const saveBtn = document.getElementById('prompt-save-btn');
+
+        if (!textareaEl || !textareaEl.dataset.filename) return;
+
+        const filename = textareaEl.dataset.filename;
+        const content = textareaEl.value;
+
+        try {
+            saveBtn.disabled = true;
+            saveBtn.textContent = '保存中...';
+
+            const response = await fetch(`/api/prompts/${filename}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+            });
+
+            if (response.ok) {
+                this.showNotification('文件保存成功', 'success');
+            } else {
+                const error = await response.json();
+                alert(`保存失败: ${error.detail}`);
+            }
+        } catch (error) {
+            console.error('保存文件失败:', error);
+            alert('保存文件失败');
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.textContent = '💾 保存';
+        }
+    }
+
+    async deletePromptFile(filename) {
+        if (!confirm(`确定要删除文件 "${filename}" 吗？此操作不可恢复。`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/prompts/${filename}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                this.showNotification('文件删除成功', 'success');
+                await this.loadPromptFiles();
+
+                // 清空编辑器
+                const titleEl = document.getElementById('prompt-editor-title');
+                const textareaEl = document.getElementById('prompt-editor-textarea');
+                const saveBtn = document.getElementById('prompt-save-btn');
+
+                if (titleEl) titleEl.textContent = '请选择一个文件';
+                if (textareaEl) {
+                    textareaEl.value = '';
+                    textareaEl.readOnly = true;
+                    delete textareaEl.dataset.filename;
+                }
+                if (saveBtn) saveBtn.disabled = true;
+
+            } else {
+                const error = await response.json();
+                alert(`删除失败: ${error.detail}`);
+            }
+        } catch (error) {
+            console.error('删除文件失败:', error);
+            alert('删除文件失败');
         }
     }
 }

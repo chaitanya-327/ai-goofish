@@ -509,6 +509,124 @@ async def save_all_env_config():
         raise HTTPException(status_code=500, detail=f"保存配置失败: {str(e)}")
 
 
+@app.post("/api/test-proxy")
+async def test_proxy():
+    """测试代理配置和连接"""
+    try:
+        from proxy_manager import ProxyManager
+        import aiohttp
+        import time
+        from dotenv import dotenv_values
+
+        # 读取代理配置
+        env_config = dotenv_values(".env")
+        proxy_enabled = env_config.get('PROXY_ENABLED', 'false').lower() == 'true'
+        proxy_api_url = env_config.get('PROXY_API_URL', '')
+        proxy_refresh_interval = int(env_config.get('PROXY_REFRESH_INTERVAL', '30'))
+        proxy_retry_count = int(env_config.get('PROXY_RETRY_COUNT', '3'))
+
+        test_result = {
+            "success": False,
+            "message": "",
+            "details": {
+                "proxy_enabled": proxy_enabled,
+                "proxy_api_url": proxy_api_url[:50] + "..." if len(proxy_api_url) > 50 else proxy_api_url,
+                "proxy_ip": None,
+                "response_time": None,
+                "test_url": "https://www.goofish.com",
+                "error": None
+            }
+        }
+
+        # 检查代理是否启用
+        if not proxy_enabled:
+            test_result["message"] = "代理功能未启用"
+            test_result["details"]["error"] = "PROXY_ENABLED设置为false"
+            return test_result
+
+        # 检查代理API配置
+        if not proxy_api_url:
+            test_result["message"] = "代理API地址未配置"
+            test_result["details"]["error"] = "PROXY_API_URL为空"
+            return test_result
+
+        # 创建代理管理器进行测试
+        proxy_manager = ProxyManager(
+            proxy_api_url=proxy_api_url,
+            proxy_enabled=True,
+            refresh_interval=proxy_refresh_interval,
+            retry_count=proxy_retry_count
+        )
+
+        # 设置简单的日志回调
+        async def test_log_callback(task_id, level, message, details=None):
+            print(f"[代理测试] {level}: {message}")
+
+        proxy_manager.set_log_context(test_log_callback, 999)
+
+        # 步骤1: 获取代理IP
+        start_time = time.time()
+        try:
+            proxy_address = await proxy_manager.get_fresh_proxy(force_refresh=True)
+            if not proxy_address:
+                test_result["message"] = "无法获取代理IP地址"
+                test_result["details"]["error"] = "代理API返回空结果或格式错误"
+                return test_result
+
+            test_result["details"]["proxy_ip"] = proxy_address
+
+        except Exception as e:
+            test_result["message"] = f"获取代理IP失败: {str(e)}"
+            test_result["details"]["error"] = str(e)
+            return test_result
+
+        # 步骤2: 测试代理连接
+        test_url = "https://www.goofish.com"
+        try:
+            # 配置代理
+            proxy_url = f"http://{proxy_address}"
+
+            # 使用代理访问测试网站
+            timeout = aiohttp.ClientTimeout(total=30)
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                async with session.get(
+                    test_url,
+                    proxy=proxy_url,
+                    headers={
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                    }
+                ) as response:
+                    end_time = time.time()
+                    response_time = round((end_time - start_time) * 1000, 2)  # 毫秒
+
+                    test_result["details"]["response_time"] = response_time
+
+                    if response.status == 200:
+                        test_result["success"] = True
+                        test_result["message"] = f"代理测试成功！响应时间: {response_time}ms"
+                    else:
+                        test_result["message"] = f"代理连接失败，HTTP状态码: {response.status}"
+                        test_result["details"]["error"] = f"HTTP {response.status}"
+
+        except asyncio.TimeoutError:
+            test_result["message"] = "代理连接超时"
+            test_result["details"]["error"] = "连接超时(30秒)"
+        except Exception as e:
+            test_result["message"] = f"代理连接测试失败: {str(e)}"
+            test_result["details"]["error"] = str(e)
+
+        return test_result
+
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"代理测试过程中发生错误: {str(e)}",
+            "details": {
+                "error": str(e)
+            }
+        }
+
+
 PROMPTS_DIR = "prompts"
 
 @app.post("/api/prompts/generate")

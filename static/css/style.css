@@ -1749,10 +1749,26 @@ button.retry-detail-btn:not(:disabled),
 
 /* 系统设置页面样式 */
 .settings-container {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 24px;
     margin: 0 auto;
+}
+
+/* 设置行布局 - 用于两列显示 */
+.settings-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* 卡片宽度控制 */
+.settings-card.full-width {
+    width: 100%;
+}
+
+.settings-card.half-width {
+    width: 100%;
 }
 
 /* 设置卡片通用样式 */
@@ -1763,6 +1779,7 @@ button.retry-detail-btn:not(:disabled),
     border: 1px solid #f0f0f0;
     overflow: hidden;
     transition: box-shadow 0.3s ease;
+    padding: 10px;
 }
 
 .settings-card:hover {
@@ -1797,6 +1814,60 @@ button.retry-detail-btn:not(:disabled),
 
 .settings-card-body {
     padding: 24px;
+}
+
+/* 测试区域统一样式 */
+.test-section {
+    padding: 20px;
+}
+
+.test-info {
+    margin-bottom: 16px;
+}
+
+.test-info p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.test-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.test-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.test-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.test-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.test-btn:active {
+    transform: translateY(0);
 }
 
 /* 系统状态检查模块 */
@@ -1923,23 +1994,38 @@ button.retry-detail-btn:not(:disabled),
     .settings-container {
         gap: 16px;
     }
-    
+
+    /* 移动端单列布局 */
+    .settings-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
     .status-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .settings-card-header {
         padding: 16px 20px 12px;
     }
-    
+
     .settings-card-body {
         padding: 20px;
     }
-    
+
+    .test-section {
+        padding: 16px;
+    }
+
+    .test-btn {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+
     .status-item {
         padding: 12px;
     }
-    
+
     .status-icon {
         font-size: 20px;
         margin-right: 10px;
@@ -3519,6 +3605,394 @@ button.retry-detail-btn:not(:disabled),
 
 .config-select option {
     padding: 8px 12px;
+}
+
+/* 旧的代理测试样式已移除，使用统一的test-section样式 */
+
+.test-result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid;
+}
+
+.test-result.success {
+    background-color: #f6ffed;
+    border-left-color: #52c41a;
+    color: #389e0d;
+}
+
+.test-result.error {
+    background-color: #fff2f0;
+    border-left-color: #ff4d4f;
+    color: #cf1322;
+}
+
+.test-result h4 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+}
+
+.test-result p {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+}
+
+.test-details {
+    display: grid;
+    gap: 8px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item .label {
+    font-weight: 500;
+    color: #666;
+    min-width: 80px;
+}
+
+.detail-item .value {
+    font-family: 'Courier New', monospace;
+    color: #333;
+    text-align: right;
+    word-break: break-all;
+}
+
+.detail-item .value.error-text {
+    color: #cf1322;
+}
+
+.test-progress {
+    margin: 15px 0;
+}
+
+.progress-step {
+    padding: 8px 12px;
+    margin: 5px 0;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+    color: #999;
+    transition: all 0.3s ease;
+}
+
+.progress-step.active {
+    background-color: #e6f7ff;
+    color: #1890ff;
+    border-left: 3px solid #1890ff;
+}
+
+.progress-step.completed {
+    background-color: #f6ffed;
+    color: #52c41a;
+    border-left: 3px solid #52c41a;
+}
+
+.progress-message {
+    margin: 10px 0;
+    padding: 8px 12px;
+    background-color: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    color: #666;
+    font-size: 13px;
+}
+
+/* Prompt管理器样式 */
+.prompt-manager {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 24px;
+    height: 600px;
+    margin: 20px 0;
+}
+
+.prompt-files-panel {
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.prompt-files-header {
+    background: #f5f5f5;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e8e8e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.prompt-files-header h4 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.create-file-btn {
+    background: #1890ff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+}
+
+.create-file-btn:hover {
+    background: #40a9ff;
+}
+
+.prompt-files-list {
+    max-height: 480px;
+    overflow-y: auto;
+}
+
+.prompt-file-item {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.prompt-file-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(2px);
+}
+
+.prompt-file-item.active {
+    background-color: #e6f7ff;
+    border-left: 4px solid #1890ff;
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15);
+}
+
+.prompt-file-item:last-child {
+    border-bottom: none;
+}
+
+.file-name {
+    font-size: 15px;
+    color: #333;
+    flex: 1;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 0;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.file-name:hover {
+    color: #1890ff;
+    background-color: rgba(24, 144, 255, 0.05);
+    padding-left: 8px;
+}
+
+.file-actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.prompt-file-item:hover .file-actions {
+    opacity: 1;
+}
+
+.edit-file-btn, .delete-file-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    min-width: 50px;
+}
+
+.edit-file-btn {
+    background: #52c41a;
+    color: white;
+}
+
+.edit-file-btn:hover {
+    background: #73d13d;
+}
+
+.delete-file-btn {
+    background: #ff4d4f;
+    color: white;
+}
+
+.delete-file-btn:hover {
+    background: #ff7875;
+}
+
+.prompt-editor-panel {
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.prompt-editor-header {
+    background: #f5f5f5;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e8e8e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.prompt-editor-title {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.prompt-save-btn {
+    background: #52c41a;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+}
+
+.prompt-save-btn:hover:not(:disabled) {
+    background: #73d13d;
+}
+
+.prompt-save-btn:disabled {
+    background: #d9d9d9;
+    cursor: not-allowed;
+}
+
+.prompt-editor-textarea {
+    flex: 1;
+    border: none;
+    padding: 20px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    background-color: #fafafa;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.prompt-editor-textarea:focus {
+    background-color: #fff;
+    box-shadow: inset 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.prompt-editor-textarea:read-only {
+    background-color: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.no-files, .error, .loading-files {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-style: italic;
+}
+
+.loading-files {
+    color: #1890ff;
+    font-style: normal;
+}
+
+.loading-files p {
+    margin: 0;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.error {
+    color: #ff4d4f;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .prompt-manager {
+        grid-template-columns: 1fr;
+        height: auto;
+        gap: 16px;
+    }
+
+    .prompt-files-panel {
+        height: 250px;
+    }
+
+    .prompt-editor-panel {
+        height: 400px;
+    }
+
+    .prompt-file-item {
+        padding: 14px 16px;
+    }
+
+    .file-name {
+        font-size: 14px;
+    }
+
+    .edit-file-btn, .delete-file-btn {
+        padding: 5px 10px;
+        font-size: 11px;
+        min-width: 45px;
+    }
+
+    .prompt-editor-textarea {
+        padding: 16px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .prompt-manager {
+        margin: 10px 0;
+    }
+
+    .prompt-files-panel {
+        height: 200px;
+    }
+
+    .prompt-editor-panel {
+        height: 350px;
+    }
+
+    .file-actions {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .edit-file-btn, .delete-file-btn {
+        padding: 4px 8px;
+        font-size: 10px;
+        min-width: 40px;
+    }
 }
 
 .config-status {
