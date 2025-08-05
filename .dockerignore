@@ -1,0 +1,132 @@
+# Docker忽略文件
+
+# Git相关
+.git
+.gitignore
+.gitattributes
+
+# Docker相关
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Python相关
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 虚拟环境
+venv/
+env/
+ENV/
+.venv/
+
+# IDE相关
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统相关
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 日志文件
+*.log
+logs/
+*.out
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+*.temp
+
+# 测试相关
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# 数据库文件（允许复制到容器中作为初始数据）
+# *.db - 注释掉，允许数据库文件被复制
+# *.sqlite - 注释掉，允许sqlite文件被复制
+# *.sqlite3 - 注释掉，允许sqlite3文件被复制
+
+# 配置文件（敏感信息）
+.env.local
+.env.production
+.env.development
+config.local.py
+
+# 明确包含需要的文件（覆盖上面的忽略规则）
+!.env
+!.env.example
+!*.db
+!prompts/
+
+# 文档
+README.md
+CHANGELOG*.md
+docs/
+*.md
+
+# 示例和测试文件
+examples/
+test_*.py
+debug_*.py
+verify_*.py
+fix_*.py
+
+# 备份文件
+*.bak
+*.backup
+*.old
+
+# 压缩文件
+*.zip
+*.tar.gz
+*.rar
+
+# 媒体文件
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.mp4
+*.avi
+
+# Node.js相关（如果有前端构建）
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

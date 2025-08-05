@@ -80,6 +80,17 @@ async def read_root(request: Request):
     """
     return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/health")
+async def health_check():
+    """健康检查端点，用于Docker容器监控"""
+    from datetime import datetime
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "service": "AI Goofish Monitor",
+        "version": "1.2.0"
+    }
+
 # --- API Endpoints ---
 @app.post("/api/tasks/generate", response_model=dict)
 async def generate_task(req: TaskGenerateRequest):
@@ -1501,4 +1512,4 @@ async def migrate_cookies():
 
 if __name__ == "__main__":
     print("启动 Web 管理界面，请在浏览器访问 http://127.0.0.1:8000")
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -180,131 +180,9 @@ ai-goofish-monitor/
 | error_message | TEXT | 错误信息 |
 | sent_at | TIMESTAMP | 发送时间 |
 
-## 🔌 API接口文档
-
-### 任务管理接口
-
-#### 获取任务列表
-```http
-GET /api/tasks
-```
-
-#### 创建任务
-```http
-POST /api/tasks
-Content-Type: application/json
-
-{
-  "task_name": "任务名称",
-  "keyword": "搜索关键词",
-  "max_pages": 3,
-  "personal_only": false,
-  "min_price": "100",
-  "max_price": "1000",
-  "ai_prompt_text": "AI分析提示词",
-  "email_address": "user@example.com",
-  "email_enabled": true
-}
-```
-
-#### 启动/停止任务
-```http
-POST /api/tasks/{task_id}/start
-POST /api/tasks/{task_id}/stop
-```
-
-#### 删除任务
-```http
-DELETE /api/tasks/{task_id}
-```
-
-### 结果查询接口
-
-#### 获取任务结果
-```http
-GET /api/tasks/{task_id}/results?page=1&limit=50&recommended_only=false
-```
-
-#### 获取商品列表
-```http
-GET /api/products?limit=50
-```
-
-#### 重新AI分析
-```http
-POST /api/retry-analysis
-Content-Type: application/json
-
-{
-  "product_id": "商品ID"
-}
-```
-
-#### 获取分析状态
-```http
-GET /api/analysis-status/{product_id}
-```
-
-### 系统设置接口
-
-#### 获取环境配置
-```http
-GET /api/settings/env-config
-```
-
-#### 更新配置项
-```http
-PUT /api/settings/env-config/{key}
-Content-Type: application/json
-
-{
-  "value": "配置值"
-}
-```
-
-### Cookie管理接口
-
-#### 获取Cookie列表
-```http
-GET /api/cookies
-```
-
-#### 添加Cookie
-```http
-POST /api/cookies
-Content-Type: application/json
-
-{
-  "name": "Cookie名称",
-  "cookie_value": "Cookie值"
-}
-```
-
-#### 删除Cookie
-```http
-DELETE /api/cookies/{cookie_id}
-```
-
-#### 测试Cookie
-```http
-POST /api/cookies/{cookie_id}/test
-```
-
-### 日志查询接口
-
-#### 获取任务日志
-```http
-GET /api/tasks/{task_id}/logs?level=INFO&limit=100
-```
-
-#### 获取系统状态
-```http
-GET /api/system/status
-```
-
 ## ⚙️ 环境配置说明
 
-项目使用 `.env` 文件进行配置，以下是所有配置项的详细说明：
+项目使用 `.env` 文件进行配置
 
 ### 必需配置
 
@@ -318,53 +196,6 @@ OPENAI_BASE_URL=https://api.openai.com/v1
 
 # 使用的模型名称
 OPENAI_MODEL_NAME=gpt-4o
-```
-
-### 可选配置
-
-#### 代理配置
-```env
-# 是否启用代理功能
-PROXY_ENABLED=true
-
-# 代理API地址
-PROXY_API_URL=http://your-proxy-api.com/getips
-
-# 代理API密钥
-PROXY_API_KEY=your_proxy_key
-
-# 代理更换间隔（秒）
-PROXY_REFRESH_INTERVAL=30
-
-# 代理重试次数
-PROXY_RETRY_COUNT=3
-```
-
-#### 商品处理配置
-```env
-# 是否跳过已存在的商品
-SKIP_EXISTING_PRODUCTS=true
-```
-
-#### 邮件通知配置
-```env
-# SMTP服务器地址
-SMTP_HOST=smtp.gmail.com
-
-# SMTP端口
-SMTP_PORT=587
-
-# SMTP用户名
-SMTP_USER=your_email@gmail.com
-
-# SMTP密码
-SMTP_PASSWORD=your_password
-
-# 是否使用TLS
-SMTP_USE_TLS=true
-
-# 发件人名称
-SMTP_FROM_NAME=AI Goofish Monitor
 ```
 
 ## 🚀 安装和使用指南
@@ -403,9 +234,20 @@ cp .env.example .env
 nano .env
 ```
 
-5. **初始化数据库**
+### Docker部署（推荐）
+
 ```bash
-python init_database.py
+# 构建镜像
+docker build -t ai-goofish:latest .
+
+# 运行容器
+docker run -d --name ai-goofish -p 8000:8000 \
+  -v "$(pwd)/data:/app/data" \
+  --restart unless-stopped \
+  ai-goofish:latest
+
+# 访问Web界面
+# http://localhost:8000
 ```
 
 ### 配置方法
@@ -442,25 +284,6 @@ python web_server.py
    - 点击"启动任务"开始监控
    - 在"运行日志"页面查看实时状态
    - 在"结果查看"页面查看爬取结果
-
-### 使用技巧
-
-1. **AI提示词优化**
-   - 使用具体的筛选条件
-   - 包含价格、品牌、成色等关键信息
-   - 可以参考 `prompts/` 目录下的模板
-
-2. **Cookie管理**
-   - 定期更新Cookie以保持登录状态
-   - 可以添加多个Cookie实现账号轮换
-
-3. **代理使用**
-   - 在网络不稳定时启用代理功能
-   - 合理设置代理更换间隔
-
-4. **性能优化**
-   - 根据网络情况调整爬取页数
-   - 使用价格筛选减少无效商品
 
 ## 📝 注意事项
 
@@ -504,12 +327,6 @@ python web_server.py
 1. **数据存储**：从JSONL文件升级到SQLite关系型数据库
 2. **网络处理**：从简单重试升级到智能代理切换系统
 3. **日志系统**：从文件日志升级到结构化数据库日志
-
-### 🆕 **全新功能模块**
-1. **代理管理**：完整的代理池管理和自动切换
-2. **Cookie管理**：多Cookie轮换和有效性检测
-3. **邮件通知**：完整的SMTP邮件发送系统
-4. **频率控制**：自适应延迟和智能频率控制
 
 ## 🤝 贡献指南
 
