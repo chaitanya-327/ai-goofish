@@ -169,11 +169,11 @@ export class TasksModule {
                             </div>
                             <div class="form-group">
                                 <label for="min-price">最低价格:</label>
-                                <input type="number" id="min-price" name="min_price" placeholder="留空表示不限">
+                                <input type="text" id="min-price" name="min_price" placeholder="留空表示不限">
                             </div>
                             <div class="form-group">
                                 <label for="max-price">最高价格:</label>
-                                <input type="number" id="max-price" name="max_price" placeholder="留空表示不限">
+                                <input type="text" id="max-price" name="max_price" placeholder="留空表示不限">
                             </div>
                             <div class="form-group">
                                 <label>
@@ -242,15 +242,21 @@ export class TasksModule {
             </thead>`;
 
         const tableBody = tasks.map(task => {
-            const emailStatus = task.email_enabled ? 
-                '<span class="tag enabled">已启用</span>' : 
+            // 验证任务ID
+            if (!task.id && task.id !== 0) {
+                console.error('❌ 任务缺少有效ID:', task);
+                return ''; // 跳过无效的任务
+            }
+
+            const emailStatus = task.email_enabled ?
+                '<span class="tag enabled">已启用</span>' :
                 '<span class="tag disabled">未启用</span>';
-            
+
             const hasPrompt = task.ai_prompt_text && task.ai_prompt_text.trim();
-            const promptPreview = hasPrompt ? 
-                (task.ai_prompt_text.length > 30 ? task.ai_prompt_text.substring(0, 30) + '...' : task.ai_prompt_text) : 
+            const promptPreview = hasPrompt ?
+                (task.ai_prompt_text.length > 30 ? task.ai_prompt_text.substring(0, 30) + '...' : task.ai_prompt_text) :
                 '未配置';
-            
+
             return `
             <tr data-task-id="${task.id}">
                 <td>
@@ -276,7 +282,7 @@ export class TasksModule {
                 </td>
             </tr>
             `;
-        }).join('');
+        }).filter(row => row.trim() !== '').join(''); // 过滤掉空行
 
         return `<table class="tasks-table">${tableHeader}<tbody>${tableBody}</tbody></table>`;
     }
@@ -456,8 +462,19 @@ export class TasksModule {
                 const tasks = await this.fetchTasks();
                 container.innerHTML = this.renderTasksTable(tasks);
             } else if (button.matches('.delete-btn')) {
-                if (!taskId) return;
+                // 添加调试信息和验证
+                console.log('删除按钮被点击, taskId:', taskId);
+
+                if (!taskId || taskId === 'null' || taskId === 'undefined') {
+                    console.error('❌ 无效的taskId:', taskId);
+                    console.error('行元素:', row);
+                    console.error('行的dataset:', row ? row.dataset : 'null');
+                    alert('错误：无法获取任务ID，请刷新页面后重试');
+                    return;
+                }
+
                 if (confirm('确定要删除这个任务吗？')) {
+                    console.log('准备删除任务ID:', taskId);
                     const result = await this.deleteTask(taskId);
                     if (result) {
                         const container = document.getElementById('tasks-table-container');
@@ -524,10 +541,11 @@ export class TasksModule {
                 data.personal_only = document.getElementById('personal-only').checked;
                 data.email_enabled = document.getElementById('email-enabled').checked;
 
+                // Add required enabled field (default to true for new tasks)
+                data.enabled = true;
+
                 // Convert numeric values
                 if (data.max_pages) data.max_pages = parseInt(data.max_pages);
-                if (data.min_price) data.min_price = parseFloat(data.min_price);
-                if (data.max_price) data.max_price = parseFloat(data.max_price);
 
                 // Remove empty values
                 Object.keys(data).forEach(key => {
