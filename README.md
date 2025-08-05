@@ -211,7 +211,7 @@ OPENAI_MODEL_NAME=gpt-4o
 
 1. **克隆项目**
 ```bash
-git clone https://github.com/ddCat-main/goofish-ai.git
+git clone https://github.com/ddCat-main/ai-goofish.git
 cd goofish-ai
 ```
 
