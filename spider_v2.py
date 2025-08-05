@@ -1643,15 +1643,16 @@ async def scrape_xianyu(task_config: dict, debug_limit: int = 0):
                         
                         # 发送ntfy通知
                         await send_ntfy_notification(item_data, ai_analysis_result.get("reason", "无"))
-                        
+                        print(f"   -> 邮件通知条件检查: email_enabled={email_enabled}, email_address={email_address}, smtp_configured={email_sender.is_configured()}")
                         # 发送邮件通知
                         if email_enabled and email_address and email_sender.is_configured():
-                            print(f"   -> 发送邮件通知到: {email_address}")
+                            print(f"   -> 准备发送邮件通知到: {email_address}")
+                            await log_to_database(task_id, 'INFO', f"准备发送邮件通知: {final_record['商品信息']['商品标题'][:30]}...")
                             try:
                                 email_success = await email_sender.send_product_notification(
-                                    email_address, 
-                                    final_record, 
-                                    ai_analysis_result, 
+                                    email_address,
+                                    final_record,
+                                    ai_analysis_result,
                                     task_name
                                 )
                                 
@@ -1811,7 +1812,9 @@ async def main():
             'keyword': task['keyword'],
             'max_pages': task.get('max_pages', 3),
             'personal_only': task.get('personal_only', True),
-            'ai_prompt_text': task.get('ai_prompt_text', '')
+            'ai_prompt_text': task.get('ai_prompt_text', ''),
+            'email_enabled': task.get('email_enabled', False),
+            'email_address': task.get('email_address', '')
         }
         
         # 添加价格范围（如果存在）

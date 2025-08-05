@@ -242,7 +242,13 @@ class EmailSender:
             )
             
             # 生成邮件主题
-            product_title = product_data.get('商品信息', {}).get('商品标题', '未知商品')
+            # 适配spider_v2.py的数据结构
+            if '商品信息' in product_data:
+                # 新的数据结构：final_record
+                product_title = product_data.get('商品信息', {}).get('商品标题', '未知商品')
+            else:
+                # 直接的商品数据结构
+                product_title = product_data.get('商品标题', '未知商品')
             subject = f"🚨 闲鱼推荐 | {product_title[:30]}..."
             
             # 发送邮件
@@ -252,21 +258,27 @@ class EmailSender:
             logger.error(f"发送商品通知邮件失败: {e}")
             return False
     
-    async def _generate_product_email_html(self, product_data: Dict, 
+    async def _generate_product_email_html(self, product_data: Dict,
                                          ai_analysis: Dict, task_name: str) -> str:
         """生成商品推荐邮件的HTML内容"""
-        
-        # 提取商品信息
-        product_info = product_data.get('商品信息', {})
-        seller_info = product_data.get('卖家信息', {})
-        
+
+        # 适配不同的数据结构
+        if '商品信息' in product_data:
+            # 新的数据结构：final_record
+            product_info = product_data.get('商品信息', {})
+            seller_info = product_data.get('卖家信息', {})
+        else:
+            # 直接的商品数据结构
+            product_info = product_data
+            seller_info = {}
+
         product_title = product_info.get('商品标题', '未知商品')
-        current_price = product_info.get('当前售价', 'N/A')
+        current_price = product_info.get('当前售价', product_info.get('商品价格', 'N/A'))
         original_price = product_info.get('原价', '')
         product_link = product_info.get('商品链接', '#')
         product_images = product_info.get('商品图片列表', [])
         location = product_info.get('商品位置', 'N/A')
-        
+
         # 卖家信息
         seller_nick = seller_info.get('卖家昵称', 'N/A')
         seller_credit = seller_info.get('卖家信用等级', 'N/A')
