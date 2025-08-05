@@ -380,7 +380,7 @@ SMTP_FROM_NAME=AI Goofish Monitor
 
 1. **克隆项目**
 ```bash
-git clone https://github.com/ddCat-main/goofish-ai.git
+git clone https://github.com/ddCat-main/ai-goofish.git
 cd goofish-ai
 ```
 
